@@ -1,0 +1,39 @@
+version: '3'
+services:
+  iky_backend:
+    container_name: iky_backend
+    build: .
+    environment:
+      APPLICATION_ENV: Production
+      REDIS_HOST: redis
+    volumes:
+     - .:/code
+    depends_on:
+      - redis
+      - mongodb
+
+  iky_gateway:
+    container_name: iky_gateway
+    build: frontend/
+    ports:
+        - "8080:80"
+    depends_on:
+      - iky_backend
+
+  mongodb:
+    container_name: mongodb
+    image: mongo
+    hostname: mongodb
+    ports:
+       - "27017:27017"
+    volumes:
+      - mongodbdata:/data
+
+  redis:
+    image: redis:3.2-alpine
+    volumes:
+      - redis_data:/data
+
+volumes:
+  mongodbdata:
+  redis_data:
